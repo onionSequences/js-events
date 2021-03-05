@@ -1,0 +1,138 @@
+@font-face {
+  font-family: "SF UI Text";
+  src: url("../fonts/SFUIText-Regular.woff") format("woff");
+}
+:root {
+  --white: #f1f1f1;
+  --orange: #d1ad88;
+  --bluelight: #3c3f4d;
+  --bluedark: #282a38;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  padding: 0;
+  margin: 0;
+}
+body {
+  background-color: var(--bluedark);
+  font-family: "SF UI Text", Arial, Helvetica, sans-serif;
+  color: var(--white);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: 2px;
+  text-align: center;
+}
+span {
+  color: var(--orange);
+}
+p {
+  text-align: center;
+  font-size: 0.8em;
+}
+form.search {
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 0 auto;
+}
+input {
+  font-family: "SF UI Text";
+  background: var(--bluelight);
+  width: 200px;
+  color: var(--white);
+  border: none;
+  height: 36px;
+  text-indent: 10px;
+  border-radius: 20px 0 0 20px; /* In pills we belive */
+}
+input:focus {
+  outline: none;
+  text-indent: 10px;
+  color: var(--white);
+}
+button {
+  font-family: "SF UI Text";
+  border: none;
+  padding: 10px;
+  background-color: var(--bluelight);
+  color: var(--white);
+  cursor: pointer;
+}
+button[type="reset"],
+button[type="submit"] {
+  position: relative;
+  left: -5px;
+}
+button[type="submit"] {
+  left: -10px;
+  border-radius: 0 20px 20px 0;
+}
+button[type="reset"] {
+  display: none;
+}
+/* Get rid off button bug, with nested icon inside button tag */
+button > * {
+  pointer-events: none;
+}
+.movies {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+.movies > article {
+  position: relative;
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+.movies button {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  border-radius: 20px;
+  width: 35px;
+  top: 10px;
+  transition: visibility 0s, opacity 0.2s linear;
+}
+.movies > article:hover button {
+  visibility: visible;
+  opacity: 1;
+}
+.movies img {
+  width: 80%;
+  border-radius: 20px;
+  height: -webkit-fill-available;
+  height: -moz-available;
+  height: fill-available;
+}
+article p {
+  margin: 5px 0 2em 0;
+  width: 70%;
+}
+
+/* Responsive */
+@media screen and (max-width: 950px) {
+  .movies > article {
+    width: 25%;
+  }
+}
+@media screen and (max-width: 800px) {
+  .movies > article {
+    width: 33%;
+  }
+}
+@media screen and (max-width: 550px) {
+  .movies > article {
+    width: 49%;
+  }
+}
