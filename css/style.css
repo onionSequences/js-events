@@ -56,6 +56,9 @@ input:focus {
   text-indent: 10px;
   color: var(--white);
 }
+*:disabled {
+  cursor: not-allowed;
+}
 button {
   font-family: "SF UI Text";
   border: none;
@@ -86,6 +89,11 @@ button > * {
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
+}
+.movies > p {
+  margin: 5em auto 0;
+  font-size: 1.5em;
+  color: #d1ad88;
 }
 .movies > article {
   position: relative;
