@@ -94,13 +94,13 @@ var searchBtn = document.querySelector("button.search-btn");
 // Let's create movies
 function moviesOnLoad(movies) {
   movies.forEach(function (movie) {
-    var createdMovie = structureForMovie(movie, movies);
+    var createdMovie = structureForMovie(movie);
     div.append(createdMovie);
   });
 }
 
 // Structure for each movie and delete button click event
-function structureForMovie(movie, movies) {
+function structureForMovie(movie) {
   var image = document.createElement("img");
   var name = document.createElement("p");
   var article = document.createElement("article");
@@ -111,6 +111,14 @@ function structureForMovie(movie, movies) {
     var index = data.indexOf(movie);
     data.splice(index, 1);
     article.remove();
+
+    if (!data.length) {
+      // Prevent search on empty arr
+      div.innerHTML = "<p>Movie list is empty</p>";
+      input.setAttribute("disabled", true);
+      searchBtn.setAttribute("disabled", true);
+    }
+    if (!div.innerHTML) div.innerHTML = "<p>Movie not found</p>"; // When search results is deleted
   });
 
   article.append(deleteMovieBtn);
@@ -124,25 +132,34 @@ function structureForMovie(movie, movies) {
   return article;
 }
 
-// Live search movies when typing and with search button
 function searchMovie(movies) {
-  // With search button
+  var errorMsg = document.createElement("p");
+  errorMsg.textContent = "Please enter movie name";
+
+  // SEARCH BUTTON //
   searchBtn.addEventListener("click", function (e) {
     var searchString = input.value.toLowerCase();
-    e.preventDefault();
-    div.innerHTML = "";
-    filterMovies(movies, searchString);
+    if (!searchString) {
+      e.preventDefault();
+      input.parentElement.append(errorMsg);
+    } else {
+      e.preventDefault();
+      div.innerHTML = "";
+      filterMovies(movies, searchString);
+    }
   });
-  // Live search on input event
-  input.addEventListener("input", function () {
-    var searchString = input.value.toLowerCase();
 
-    // We want to display delete input button X too so we go with IF statment (Added feature beside homework)
+  // INPUT SEARCH //
+  input.addEventListener("input", function (e) {
+    var searchString = e.target.value.toLowerCase();
+
+    // Display delete input button X (Added feature beside homework)
     if (!searchString) {
       deleteInputBtn.style.display = "none";
       div.innerHTML = "";
       moviesOnLoad(movies);
     } else {
+      errorMsg.remove();
       deleteInputBtn.style.display = "inline-block";
       div.innerHTML = "";
       filterMovies(movies, searchString);
@@ -154,16 +171,19 @@ function searchMovie(movies) {
 // If its delete input text btn clicked we know input field is empty so we create movies again
 function deleteInputButton(movies) {
   deleteInputBtn.addEventListener("click", function () {
+    deleteInputBtn.style.display = "none";
     div.innerHTML = "";
     moviesOnLoad(movies);
   });
 }
 // Function for filtering movies
 function filterMovies(movies, searchString) {
-  var filteredMovies = movies.filter(function (movie) {
+  var filtered = movies.filter(function (movie) {
     return movie.movieName.toLowerCase().includes(searchString);
   });
-  moviesOnLoad(filteredMovies);
+  filtered.length
+    ? moviesOnLoad(filtered)
+    : (div.innerHTML = "<p>Movie not found</p>");
 }
 
 moviesOnLoad(data);
