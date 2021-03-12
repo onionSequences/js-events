@@ -92,9 +92,7 @@ var deleteInputBtn = document.querySelector('button[type="reset"]');
 var searchBtn = document.querySelector("button.search-btn");
 
 // Let's create movies
-function moviesOnLoad(arr) {
-  var movies = arr;
-
+function moviesOnLoad(movies) {
   movies.forEach(function (movie) {
     var createdMovie = structureForMovie(movie, movies);
     div.append(createdMovie);
@@ -110,8 +108,8 @@ function structureForMovie(movie, movies) {
 
   deleteMovieBtn.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>';
   deleteMovieBtn.addEventListener("click", function () {
-    var index = movies.indexOf(movie);
-    movies.splice(index, 1);
+    var index = data.indexOf(movie);
+    data.splice(index, 1);
     article.remove();
   });
 
@@ -147,8 +145,8 @@ function searchMovie(movies) {
     } else {
       deleteInputBtn.style.display = "inline-block";
       div.innerHTML = "";
-      deleteInputButton(movies);
       filterMovies(movies, searchString);
+      deleteInputButton(movies);
     }
   });
 }
