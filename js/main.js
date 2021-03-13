@@ -88,7 +88,6 @@ var data = [
 ];
 var input = document.querySelector(".search input");
 var div = document.querySelector(".movies");
-var deleteInputBtn = document.querySelector('button[type="reset"]');
 var searchBtn = document.querySelector("button.search-btn");
 
 // Let's create movies
@@ -107,19 +106,7 @@ function structureForMovie(movie) {
   var deleteMovieBtn = document.createElement("button");
 
   deleteMovieBtn.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>';
-  deleteMovieBtn.addEventListener("click", function () {
-    var index = data.indexOf(movie);
-    data.splice(index, 1);
-    article.remove();
-
-    if (!data.length) {
-      // Prevent search on empty arr
-      div.innerHTML = "<p>Movie list is empty</p>";
-      input.setAttribute("disabled", true);
-      searchBtn.setAttribute("disabled", true);
-    }
-    if (!div.innerHTML) div.innerHTML = "<p>Movie not found</p>"; // When search results is deleted
-  });
+  deleteMovie(deleteMovieBtn, movie, article);
 
   article.append(deleteMovieBtn);
 
@@ -132,59 +119,65 @@ function structureForMovie(movie) {
   return article;
 }
 
-function searchMovie(movies) {
+function deleteMovie(element, movie, article) {
+  element.addEventListener("click", function () {
+    data.splice(data.indexOf(movie), 1);
+    article.remove();
+
+    if (!data.length) {
+      div.innerHTML =
+        '<p>Movies list is empty. <br><a href="' +
+        window.location.pathname +
+        '">Refresh page</a></p>';
+      input.setAttribute("disabled", true);
+      searchBtn.setAttribute("disabled", true);
+    }
+    if (!div.innerHTML)
+      div.innerHTML = "<p>No more movies for this search.</p>";
+  });
+}
+
+function searchMovies(movies) {
   var errorMsg = document.createElement("p");
   errorMsg.textContent = "Please enter movie name";
 
-  // SEARCH BUTTON //
+  // SEARCH WITH BUTTON //
   searchBtn.addEventListener("click", function (e) {
-    var searchString = input.value.toLowerCase();
-    if (!searchString) {
-      e.preventDefault();
-      input.parentElement.append(errorMsg);
-    } else {
+    if (input.value) {
       e.preventDefault();
       div.innerHTML = "";
-      filterMovies(movies, searchString);
+      filterMovies(movies);
+    } else {
+      e.preventDefault();
+      input.parentElement.append(errorMsg);
     }
   });
 
   // INPUT SEARCH //
-  input.addEventListener("input", function (e) {
-    var searchString = e.target.value.toLowerCase();
-
-    // Display delete input button X (Added feature beside homework)
-    if (!searchString) {
-      deleteInputBtn.style.display = "none";
+  input.addEventListener("input", function () {
+    if (!input.value) {
       div.innerHTML = "";
       moviesOnLoad(movies);
     } else {
       errorMsg.remove();
-      deleteInputBtn.style.display = "inline-block";
       div.innerHTML = "";
-      filterMovies(movies, searchString);
-      deleteInputButton(movies);
+      filterMovies(movies);
     }
   });
 }
 
-// If its delete input text btn clicked we know input field is empty so we create movies again
-function deleteInputButton(movies) {
-  deleteInputBtn.addEventListener("click", function () {
-    deleteInputBtn.style.display = "none";
-    div.innerHTML = "";
-    moviesOnLoad(movies);
-  });
-}
-// Function for filtering movies
-function filterMovies(movies, searchString) {
+function filterMovies(movies) {
+  var searchValue = input.value.toLowerCase();
   var filtered = movies.filter(function (movie) {
-    return movie.movieName.toLowerCase().includes(searchString);
+    return movie.movieName.toLowerCase().includes(searchValue);
   });
   filtered.length
     ? moviesOnLoad(filtered)
-    : (div.innerHTML = "<p>Movie not found</p>");
+    : (div.innerHTML =
+        "<p>You searched for " +
+        input.value +
+        ". But we didn't find any movie.</p>");
 }
 
 moviesOnLoad(data);
-searchMovie(data);
+searchMovies(data);
