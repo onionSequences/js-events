@@ -90,40 +90,48 @@ var input = document.querySelector(".search input");
 var div = document.querySelector(".movies");
 var searchBtn = document.querySelector("button.search-btn");
 
-// Let's create movies
+// Lets add movies to page
 function moviesOnLoad(movies) {
+  div.innerHTML = "";
   movies.forEach(function (movie) {
-    var createdMovie = structureForMovie(movie);
-    div.append(createdMovie);
+    div.append(structureForMovie(movie));
   });
 }
 
-// Structure for each movie and delete button click event
+// We create structure for each movie
 function structureForMovie(movie) {
-  var image = document.createElement("img");
-  var name = document.createElement("p");
+  var image = createEl("img", movie.movieName, movie.imageUrl);
+  var name = createEl("p", movie.movieName);
   var article = document.createElement("article");
-  var deleteMovieBtn = document.createElement("button");
+  var deleteMovieBtn = createEl(
+    "button",
+    '<i class="fa fa-times" aria-hidden="true"></i>'
+  );
 
-  deleteMovieBtn.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>';
   deleteMovie(deleteMovieBtn, movie, article);
+  article.prepend(deleteMovieBtn, image, name);
 
-  article.append(deleteMovieBtn);
-
-  image.setAttribute("alt", movie.movieName);
-  image.setAttribute("src", movie.imageUrl);
-  article.append(image);
-
-  name.textContent = movie.movieName;
-  article.append(name);
   return article;
+}
+
+function createEl(type, text, url) {
+  var element = document.createElement(type);
+
+  if (type === "img") {
+    element.setAttribute("alt", text);
+    element.setAttribute("src", url);
+  }
+  if (type === "button") element.innerHTML = text;
+  if (type === "p") element.textContent = text;
+
+  return element;
 }
 
 function deleteMovie(element, movie, article) {
   element.addEventListener("click", function () {
     data.splice(data.indexOf(movie), 1);
     article.remove();
-
+    // Error's handle
     if (!data.length) {
       div.innerHTML =
         '<p>Movies list is empty. <br><a href="' +
@@ -133,43 +141,29 @@ function deleteMovie(element, movie, article) {
       searchBtn.setAttribute("disabled", true);
     }
     if (!div.innerHTML)
-      div.innerHTML = "<p>No more movies for this search.</p>";
+      div.innerHTML = "<p>No more results for this search.</p>";
   });
 }
 
 function searchMovies(movies) {
-  var errorMsg = document.createElement("p");
-  errorMsg.textContent = "Please enter movie name";
+  var errorMsg = createEl("p", "Please enter movie name");
 
   // SEARCH WITH BUTTON //
   searchBtn.addEventListener("click", function (e) {
-    if (input.value) {
-      e.preventDefault();
-      div.innerHTML = "";
-      filterMovies(movies);
-    } else {
-      e.preventDefault();
-      input.parentElement.append(errorMsg);
-    }
+    e.preventDefault();
+    input.value ? filterMovies(movies) : input.parentElement.append(errorMsg);
   });
 
-  // INPUT SEARCH //
+  // SEARCH ON INPUT //
   input.addEventListener("input", function () {
-    if (!input.value) {
-      div.innerHTML = "";
-      moviesOnLoad(movies);
-    } else {
-      errorMsg.remove();
-      div.innerHTML = "";
-      filterMovies(movies);
-    }
+    errorMsg.remove();
+    !input.value ? moviesOnLoad(movies) : filterMovies(movies);
   });
 }
 
 function filterMovies(movies) {
-  var searchValue = input.value.toLowerCase();
   var filtered = movies.filter(function (movie) {
-    return movie.movieName.toLowerCase().includes(searchValue);
+    return movie.movieName.toLowerCase().includes(input.value.toLowerCase());
   });
   filtered.length
     ? moviesOnLoad(filtered)
